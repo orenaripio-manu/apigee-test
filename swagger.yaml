@@ -1,0 +1,33 @@
+---
+swagger: "2.0"
+info:
+  description: "test"
+  version: "v1"
+  title: "test"
+host: "jsonplaceholder.typicode.com"
+basePath: "/"
+schemes:
+- "https"
+paths:
+  /posts:
+    get:
+      summary: "sample with params"
+      parameters:
+      - name: "id"
+        in: "query"
+        description: "some description here"
+        required: true
+        type: "string"
+        default: "1"
+      responses:
+        200:
+          description: "Success response"
+  /:
+    get:
+      summary: "return home"
+      description: "some description"
+      parameters: []
+      responses:
+        200:
+          description: "a"
+definitions: {}
