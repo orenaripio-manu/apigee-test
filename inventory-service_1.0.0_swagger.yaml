@@ -1,0 +1,76 @@
+swagger: '2.0'
+info:
+  version: '1.0.0'
+  title: 'Inventory Service'
+  description: 'Inventory Service'
+host: inventory-service-demo.cfapps.io
+basePath: /
+schemes:
+ - https
+produces:
+  - application/json
+paths:
+  '/inventory':
+    post:
+      operationId: addInventory
+      description: Add an Inventory Item
+      parameters:
+        - in: body
+          name: inventoryItem
+          description: Item to be added
+          schema:
+            $ref: '#/definitions/InventoryItem'
+      responses:
+        201:
+          description: item created
+          schema:
+            $ref: '#/definitions/InventoryItem'
+        400:
+          description: invalid input, object invalid
+        403:
+          description: Service not avaialble
+    get:
+      operationId: getInventory
+      description: Get all Inventory Items
+      responses:
+        200:
+          description: Succesful response
+          schema:
+            type: array
+            items:
+                $ref: '#/definitions/InventoryItem'
+  '/inventory/{inventoryId}':
+    get:
+      parameters:
+      - in: path
+        name: inventoryId
+        type: integer
+        required: true
+        description: Numeric Id of Inventory
+      operationId: getInventoryById
+      description: Get all Inventory Items
+      responses:
+        200:
+          description: Succesful response
+          schema:
+            $ref: '#/definitions/InventoryItem'
+definitions:
+  InventoryItem:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+        example: 1
+      name:
+        type: string
+        example: Item 1
+      inventoryCount:
+        type: integer
+        format: int32
+        example: 10
+      releaseDate:
+        type: string
+        format: int32
+        example: 2016-08-29T09:12:33.001Z
+x-apigee-id: 'inventory-service'
