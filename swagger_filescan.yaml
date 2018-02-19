@@ -1,0 +1,42 @@
+swagger: '2.0'
+info:
+  description: 'File Scan service'  
+  version: 1.0.0
+  title: File Scan Service
+  termsOfService: 'https://manulife.com/terms/'
+  contact:
+    email: jose_l_aripio@manulife.com
+host: antivirus-service-hk-shared-sit.apps.eas.pcf.manulife.com
+basePath: /api/v1/antivirus
+#Defines the sections
+tags:
+  - name: scanFile
+    description: scan file if exsisting/valid
+schemes:
+  - https
+  - http
+paths:
+  '/scan':
+    post:
+      tags:
+        - scan
+      summary: scan attached file if valid
+      consumes:
+        - multipart/form-data
+      produces:
+        - application/json
+      parameters:
+        - name: file
+          in: formData
+          description: file to be scanned
+          required: true
+          type: file
+      responses:
+        '400':
+          description: Invalid file
+        '500':
+          description: System Error
+        '220':
+          description: Infected
+        '200':
+          description: Passed
