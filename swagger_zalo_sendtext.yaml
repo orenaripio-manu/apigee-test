@@ -1,0 +1,34 @@
+swagger: '2.0'
+info:
+  description: 'Zalo Service'  
+  version: 1.0.0
+  title: Zalo Service
+  termsOfService: 'https://manulife.com/terms/'
+  contact:
+    email: jose_l_aripio@manulife.com
+host: openapi.zaloapp.com
+basePath: /oa/v1/sendmessage/text
+#Defines the sections
+tags:
+  - name: convert
+    description: convert to http/tcp call
+schemes:
+  - https
+  - http
+paths:
+  /sendmessage/text:
+    post:
+      parameters:
+        - name: oaid
+          in: query
+          description: 'id of the Official Account'
+          required: true
+          type: string 
+        - name: data
+          in: query
+          required: true
+          description: 'contains the id of the attention and the message content: Example: { "message": "Hello", "uid": 448706819870779}.'
+          type: string
+      responses:
+        '200':
+          description: OK
