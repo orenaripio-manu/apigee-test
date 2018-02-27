@@ -1,0 +1,64 @@
+swagger: '2.0'
+info:
+  description: 'File Scan Service'  
+  version: 1.0.0
+  title: File Scan Service
+  termsOfService: 'https://manulife.com/terms/'
+  contact:
+    email: Edzay_M_Salcedo@manulife.com
+host: filescan.manulife.com
+basePath: /v1
+#Defines the sections
+tags:
+  - name: filescan
+    description: Filescan service for scanning and dispatching requests to adaptor
+schemes:
+  - https
+  - http
+paths:
+  '/filescan/scan':
+    post:
+      tags:
+        - filescan
+      summary: Scan attached file and dispatch to adaptor
+      operationId: scan
+      consumes:
+        - multipart/form-data
+      parameters:
+        - name: filename
+          in: formData
+          description: Name of file
+          required: true
+          type: string
+        - name: file
+          in: formData
+          description: File to be scanned
+          required: false
+          type: file
+        - name: content
+          in: query  
+          description: File content
+          required: false
+          type: string
+        - name: adaptor
+          in: query
+          description: Adaptor name
+          required: false
+          type: string
+      responses:
+        '400':
+          description: INVALID_FILE
+          schema:
+            type: string
+        '500':
+          description: SYSTEM_ERROR
+          schema:
+            type: string
+        '220':
+          description: INFECTED
+          schema:
+            type: string
+        '200':
+          description: OK
+          schema:
+            type: string
