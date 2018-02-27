@@ -1,0 +1,771 @@
+swagger: '2.0'
+info:
+  version: '1.0.0'
+  title: 'Zalo Services'
+  description: 'Zalo Services'
+host: openapi.zaloapp.com
+basePath: /oa/v1
+#Defines the sections
+schemes:
+  - https
+  - http
+tags:
+- name: "Account"
+  description: "Access to followers"
+- name: "Notification"
+  description: "Access to group apis"
+- name: "Imaging"
+  description: "Label operations" 
+- name: "Tag"
+  description: "send messages"  
+paths:
+  /account/updatefollowerinfo:
+    post:
+      tags:
+        - "Account"
+      summary: 'Update information of interested people such as name, phone number, ... This information will be stored in the profile of the interested person and can be accessed through the " Get interested people " API ("sharedInfo" section).'  
+      operationId: "updateFollowerInfo"
+      consumes:
+      - "application/x-www-form-urlencoded"
+      produces:
+      - "text/json"
+      parameters:
+        - name: oaid
+          in: query
+          description: 'id of the Official Account'
+          required: true
+          type: string 
+        - name: data
+          in: query
+          required: true
+          description: 'Contains information to update. Example: { "uid":long, "districtId":Integer, "address":String, "phone":long, "name":String, "wardId":Integer, "cityId":Integer }'
+          type: string
+        - name: secretkey
+          in: query
+          required: true
+          description: 'user secret key'
+          type: string  
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: string    
+  /account/getfollowers:
+    get:
+      tags:
+        - "Account"
+      summary: 'Get a list of people interested in the Official Account'
+      operationId: "getFollowers"
+      consumes:
+      - "application/x-www-form-urlencoded"
+      produces:
+      - "text/json"
+      parameters:
+        - name: oaid
+          in: query
+          description: 'id of the Official Account'
+          required: true
+          type: string 
+        - name: data
+          in: query
+          required: true
+          description: 'Contains the position and number of people interested in getting: {"offset": [value], "count": [value]}. Each API call can take up to 50. Offset starts at 0'
+          type: string
+        - name: secretkey
+          in: query
+          required: true
+          description: 'user secret key'
+          type: string  
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: string    
+  /account/reqinfo:
+    post:
+      tags:
+        - "Account"
+      summary: 'Send a message to the interested party of the Official Account to request information.'
+      operationId: "requestInformation"
+      consumes:
+      - "application/x-www-form-urlencoded"
+      produces:
+      - "text/json"
+      parameters:
+        - name: oaid
+          in: query
+          description: 'id of the Official Account'
+          required: true
+          type: string 
+        - name: data
+          in: query
+          required: true
+          description: 'Contains the id of the interested person and the content of the message. Example: { "uid": long, "title": String, "desc": String, "thumb": String }'
+          type: string
+        - name: secretkey
+          in: query
+          required: true
+          description: 'user secret key'
+          type: string  
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: string  
+  /account/group/sendmsg:
+    post:
+      tags:
+        - "Account"
+      summary: 'Send a message to the group that the Official Account is participating in.'
+      operationId: "groupSendMessage"
+      consumes:
+      - "application/x-www-form-urlencoded"
+      produces:
+      - "text/json"
+      parameters:
+        - name: oaid
+          in: query
+          description: 'id of the Official Account'
+          required: true
+          type: string 
+        - name: data
+          in: query
+          required: true
+          description: 'Contains the id of the group to send and the content of the message. TEXT: { "message": String, "groupid": String, "type": "text" }  PICTURE: { "message": String, // optional, description for image "groupid": String, "type":"image", "imageid": String }  LINK: { "links":[ { "linkthumb": String "linktitle": String, "link": String, "linkdes": String },... ], "groupid": String, "type":"links" }  DATA: {  "errorCode":int,  "errorMsg":String,  "data":{ "msgId":String  } }'
+          type: string
+        - name: secretkey
+          in: query
+          required: true
+          description: 'user secret key'
+          type: string  
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: string  
+  /account/group/getgroup:
+    get:
+      tags:
+        - "Account"
+      summary: 'Get the group information that the Official Account is participating in.'
+      operationId: "groupGetGroupInfo"
+      consumes:
+      - "application/x-www-form-urlencoded"
+      produces:
+      - "text/json"
+      parameters:
+        - name: oaid
+          in: query
+          description: 'id of the Official Account'
+          required: true
+          type: string 
+        - name: groupid
+          in: query
+          required: true
+          description: 'group id'
+          type: string
+        - name: secretkey
+          in: query
+          required: true
+          description: 'user secret key'
+          type: string  
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: string 
+  /account/group/getgroupsofoa:
+    get:
+      tags:
+        - "Account"
+      summary: 'Get the group list that the Official Account joins.'
+      operationId: "getGroupsOfOA"
+      consumes:
+      - "application/x-www-form-urlencoded"
+      produces:
+      - "text/json"
+      parameters:
+        - name: oaid
+          in: query
+          description: 'id of the Official Account'
+          required: true
+          type: string 
+        - name: secretkey
+          in: query
+          required: true
+          description: 'user secret key'
+          type: string  
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: string   
+  /notification/sendmessage/phone/invite:
+    post:
+      tags:
+        - "Notification"
+      summary: 'Send interest invites (Beta)'
+      description: 'Send a message of interest to the Official Account via phone number. If the customer is not interested in the official account, Zalo system will send a message inviting interested customers. If customers click on the agreed interest message, the system will call the webhook Zalo registered 3rd party applications information about webhook look at here'
+      operationId: "sendInvite"
+      consumes:
+      - "application/x-www-form-urlencoded"
+      produces:
+      - "text/json"
+      parameters:
+        - name: oaid
+          in: query
+          description: 'id of the Official Account'
+          required: true
+          type: string 
+        - name: data
+          in: query
+          required: true
+          description: 'contains the id of the attention and the message content: Example: { "message": "Hello", "uid": 448706819870779}.'
+          type: string
+        - name: secretkey
+          in: query
+          required: true
+          description: 'user secret key'
+          type: string  
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: string  
+  /tag/gettagsofoa:
+    get:
+      tags:
+        - "Tag"
+      summary: 'Get the list of Official Account labels'
+      operationId: "getTagsOfOA"
+      consumes:
+      - "application/x-www-form-urlencoded"
+      produces:
+      - "text/json"
+      parameters:
+        - name: oaid
+          in: query
+          description: 'id of the Official Account'
+          required: true
+          type: string 
+        - name: secretkey
+          in: query
+          required: true
+          description: 'user secret key'
+          type: string  
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: string          
+  /tag/rmtag:
+    post:
+      tags:
+        - "Tag"
+      summary: 'Remove the label'
+      operationId: "removeTag"
+      consumes:
+      - "application/x-www-form-urlencoded"
+      produces:
+      - "text/json"
+      parameters:
+        - name: oaid
+          in: query
+          description: 'id of the Official Account'
+          required: true
+          type: string 
+        - name: data
+          in: query
+          required: true
+          description: 'Contains the name of the label.'
+          type: string  
+        - name: secretkey
+          in: query
+          required: true
+          description: 'user secret key'
+          type: string  
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: string    
+  /tag/rmfollowerfromtag:
+    post:
+      tags:
+        - "Tag"
+      summary: 'Interested persons removed from label'
+      description: ''
+      operationId: "removeFollowerFromTag"
+      consumes:
+      - "application/x-www-form-urlencoded"
+      produces:
+      - "text/json"
+      parameters:
+        - name: oaid
+          in: query
+          description: 'id of the Official Account'
+          required: true
+          type: string 
+        - name: data
+          in: query
+          required: true
+          description: 'Id contains the names of people interested and manual'
+          type: string  
+        - name: secretkey
+          in: query
+          required: true
+          description: 'user secret key'
+          type: string  
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: string  
+  /tag/tagfollower:
+    post:
+      tags:
+        - "Tag"
+      summary: 'Labeled for concern.'
+      description: ''
+      operationId: "tagFollower"
+      consumes:
+      - "application/x-www-form-urlencoded"
+      produces:
+      - "text/json"
+      parameters:
+        - name: oaid
+          in: query
+          description: 'id of the Official Account'
+          required: true
+          type: string 
+        - name: data
+          in: query
+          required: true
+          description: 'Id contains the names of people interested and manual'
+          type: string  
+        - name: secretkey
+          in: query
+          required: true
+          description: 'user secret key'
+          type: string  
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: string          
+  /notification/sendmessage/text:
+    post:
+      tags:
+        - "Notification"
+      summary: 'Send a message to the person concerned as text'
+      description: ''
+      operationId: "sendText"
+      consumes:
+      - "application/x-www-form-urlencoded"
+      produces:
+      - "text/json"
+      parameters:
+        - name: oaid
+          in: query
+          description: 'id of the Official Account'
+          required: true
+          type: string 
+        - name: data
+          in: query
+          required: true
+          description: 'contains the id of the attention and the message content: Example: { "message": "Hello", "uid": 448706819870779}.'
+          type: string
+        - name: secretkey
+          in: query
+          required: true
+          description: 'user secret key'
+          type: string  
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: string
+  /notification/sendmessage/image:
+    post:
+      tags:
+        - "Notification"
+      summary: 'Send a message to people who are interested in the shape'
+      description: ''
+      operationId: "sendImage"
+      consumes:
+      - "application/x-www-form-urlencoded"
+      produces:
+      - "text/json"
+      parameters:
+        - name: oaid
+          in: query
+          description: 'id of the Official Account'
+          required: true
+          type: string 
+        - name: data
+          in: query
+          required: true
+          description: 'Contains id of interested people to send and the message content. See details in the table below'
+          type: string
+        - name: secretkey
+          in: query
+          required: true
+          description: 'user secret key'
+          type: string  
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: string   
+  /notification/sendmessage/links:
+    post:
+      tags:
+        - "Notification"
+      summary: 'Send a message to the person concerned as a link'
+      description: ''
+      operationId: "sendLinks"
+      consumes:
+      - "application/x-www-form-urlencoded"
+      produces:
+      - "text/json"
+      parameters:
+        - name: oaid
+          in: query
+          description: 'id of the Official Account'
+          required: true
+          type: string 
+        - name: data
+          in: query
+          required: true
+          description: 'Contains id of interested people to send and the message content. See details in the table below'
+          type: string
+        - name: secretkey
+          in: query
+          required: true
+          description: 'user secret key'
+          type: string  
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: string   
+  /notification/sendmessage/actionlist:
+    post:
+      tags:
+        - "Notification"
+      summary: 'Send a message to the person concerned. Interested people can interact with 3rd party applications via messages'
+      description: ''
+      operationId: "sendActionList"
+      consumes:
+      - "application/x-www-form-urlencoded"
+      produces:
+      - "text/json"
+      parameters:
+        - name: oaid
+          in: query
+          description: 'id of the Official Account'
+          required: true
+          type: string 
+        - name: data
+          in: query
+          required: true
+          description: 'Contains id of interested people to send and the message content. See details in the table below'
+          type: string
+        - name: secretkey
+          in: query
+          required: true
+          description: 'user secret key'
+          type: string  
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: string  
+  /notification/sendmessage/sticker:
+    post:
+      tags:
+        - "Notification"
+      summary: 'Send a message to people who are interested in the form of stickers'
+      description: ''
+      operationId: "sendSticker"
+      consumes:
+      - "application/x-www-form-urlencoded"
+      produces:
+      - "text/json"
+      parameters:
+        - name: oaid
+          in: query
+          description: 'id of the Official Account'
+          required: true
+          type: string 
+        - name: data
+          in: query
+          required: true
+          description: 'Contains id of interested people to send and the message content. See details in the table below'
+          type: string
+        - name: secretkey
+          in: query
+          required: true
+          description: 'user secret key'
+          type: string  
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: string
+  /notification/sendmessage/gif:
+    post:
+      tags:
+        - "Notification"
+      summary: 'Send a message to the person concerned as a gif'
+      description: ''
+      operationId: "sendGif"
+      consumes:
+      - "application/x-www-form-urlencoded"
+      produces:
+      - "text/json"
+      parameters:
+        - name: oaid
+          in: query
+          description: 'id of the Official Account'
+          required: true
+          type: string 
+        - name: data
+          in: query
+          required: true
+          description: 'Contains id of interested people to send and the message content. See details in the table below'
+          type: string
+        - name: secretkey
+          in: query
+          required: true
+          description: 'user secret key'
+          type: string  
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: string
+  /imaging/upload/image:
+    post:
+      tags:
+        - "Imaging"
+      summary: 'Upload images to the system to perform Zalo send picture messages'
+      description: ''
+      operationId: "uploadImage"
+      consumes:
+      - "multipart/form-data"
+      produces:
+      - "text/json"
+      parameters:
+        - name: oaid
+          in: query
+          description: 'id of the Official Account'
+          required: true
+          type: string 
+        - name: file
+          in: formData
+          required: true
+          description: 'Binary content of the image'
+          type: file
+        - name: secretkey
+          in: query
+          required: true
+          description: 'user secret key'
+          type: string  
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: string  
+  /imaging/upload/gif:
+    post:
+      tags:
+        - "Imaging"
+      summary: 'Up system to upload gif Zalo to perform messaging animated gif'
+      description: ''
+      operationId: "uploadGif"
+      consumes:
+      - "multipart/form-data"
+      produces:
+      - "text/json"
+      parameters:
+        - name: oaid
+          in: query
+          description: 'id of the Official Account'
+          required: true
+          type: string 
+        - name: file
+          in: formData
+          required: true
+          description: 'Binary content of gif files. Maximum 5242880 bytes'
+          type: file
+        - name: secretkey
+          in: query
+          required: true
+          description: 'user secret key'
+          type: string  
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: string  
+  /account/getprofile:
+    get:
+      tags:
+        - "Account"
+      summary: 'Get the information of users who are interested OA'
+      description: ''
+      operationId: "getProfile"
+      consumes:
+      - "application/x-www-form-urlencoded"
+      produces:
+      - "text/json"
+      parameters:
+        - name: oaid
+          in: query
+          description: 'id of the Official Account'
+          required: true
+          type: string 
+        - name: uid
+          in: query
+          required: true
+          description: 'id or phone number of the person concerned. Example: If the user id uid = 291111132471832872, if using the phone number uid = 84994521752'
+          type: string
+        - name: secretkey
+          in: query
+          required: true
+          description: 'user secret key'
+          type: string  
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: string 
+  /account/getmessagestatus:
+    post:
+      tags:
+        - "Account"
+      summary: 'Get the status of sent messages'
+      description: ''
+      operationId: "getMessageStatus"
+      consumes:
+      - "application/x-www-form-urlencoded"
+      produces:
+      - "text/json"
+      parameters:
+        - name: oaid
+          in: query
+          description: 'id of the Official Account'
+          required: true
+          type: string 
+        - name: msgstr
+          in: query
+          required: true
+          description: 'Contains id of interested people to send and the message content. See details in the table below'
+          type: string
+        - name: secretkey
+          in: query
+          required: true
+          description: 'user secret key'
+          type: string  
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: string 
+  /notification/sendmessage/reply/text:
+    post:
+      tags:
+        - "Notification"
+      summary: 'Reply message to users as text. Reply message can be sent to users who are not interested in official accounts as long as the user can send messages to the offcial account. Each message sent to users answered up to 10 times'
+      description: ''
+      operationId: "sendReplyText"
+      consumes:
+      - "application/x-www-form-urlencoded"
+      produces:
+      - "text/json"
+      parameters:
+        - name: oaid
+          in: query
+          description: 'id of the Official Account'
+          required: true
+          type: string 
+        - name: data
+          in: query
+          required: true
+          description: 'Contains the id of a message to be answered and the message content. See details in the table below'
+          type: string
+        - name: secretkey
+          in: query
+          required: true
+          description: 'user secret key'
+          type: string  
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: string
+  /notification/sendmessage/reply/image:
+    post:
+      tags:
+        - "Notification"
+      summary: 'Reply message to users as text. Reply message can be sent to users who are not interested in official accounts as long as the user can send messages to the offcial account. Each message sent to users answered up to 10 times'
+      description: ''
+      operationId: "sendReplyImage"
+      consumes:
+      - "application/x-www-form-urlencoded"
+      produces:
+      - "text/json"
+      parameters:
+        - name: oaid
+          in: query
+          description: 'id of the Official Account'
+          required: true
+          type: string 
+        - name: data
+          in: query
+          required: true
+          description: 'Contains the id of a message to be answered and the message content. See details in the table below'
+          type: string
+        - name: secretkey
+          in: query
+          required: true
+          description: 'user secret key'
+          type: string  
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: string   
+  /notification/sendmessage/reply/links:
+    post:
+      tags:
+        - "Notification"
+      summary: 'Reply message to users as links. Reply message can be sent to users who are not interested in official accounts as long as the user can send messages to the offcial account. Each message sent to users answered up to 10 times'
+      description: ''
+      operationId: "sendReplyLink"
+      consumes:
+      - "application/x-www-form-urlencoded"
+      produces:
+      - "text/json"
+      parameters:
+        - name: oaid
+          in: query
+          description: 'id of the Official Account'
+          required: true
+          type: string 
+        - name: data
+          in: query
+          required: true
+          description: 'Contains the id of a message to be answered and the message content. See details in the table below'
+          type: string
+        - name: secretkey
+          in: query
+          required: true
+          description: 'user secret key'
+          type: string  
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: string            
