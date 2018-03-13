@@ -3,7 +3,7 @@ info:
   description: 'File Scan Service'  
   version: 1.0.0
   title: File Scan Service
-  termsOfService: 'https://manulife.com/terms/'
+  termsOfService: 'https://www.manulife.com'
   contact:
     email: Edzay_M_Salcedo@manulife.com
 host: filescan.manulife.com
@@ -14,21 +14,20 @@ tags:
     description: Filescan service for scanning and dispatching requests to adaptor
 schemes:
   - https
-  - http
 paths:
-  '/filescan/scan':
+  '/filescan':
     post:
       tags:
         - filescan
       summary: Scan attached file and dispatch to adaptor
-      operationId: scan
+      operationId: scanFile
       consumes:
-        - multipart/form-data
+      - multipart/form-data
       parameters:
         - name: filename
           in: formData
           description: Name of file
-          required: true
+          required: false
           type: string
         - name: file
           in: formData
@@ -36,29 +35,33 @@ paths:
           required: false
           type: file
         - name: content
-          in: query  
+          in: formData  
           description: File content
           required: false
           type: string
         - name: adaptor
-          in: query
+          in: formData
           description: Adaptor name
           required: false
           type: string
       responses:
-        '400':
-          description: INVALID_FILE
-          schema:
-            type: string
         '500':
           description: SYSTEM_ERROR
           schema:
             type: string
-        '220':
-          description: INFECTED
+        '404':
+          description: NOT_FOUND
+        '403':
+          description: FORBIDDEN
+        '401':
+          description: UNAUTHORIZED
+        '400':
+          description: INVALID_FILE
           schema:
             type: string
+        '201':
+          description: CREATED
         '200':
-          description: OK
+          description: PASSED / INFECTED
           schema:
             type: string
